@@ -8,6 +8,7 @@ import os
 from sklearn.svm import LinearSVC
 from sklearn.externals import joblib
 from scipy.cluster.vq import *
+from scipy._lib.six import xrange
 
 # Load the classifier, class names, scaler, number of clusters and vocabulary 
 clf, classes_names, stdSlr, k, voc = joblib.load("bof.pkl")
@@ -27,7 +28,7 @@ if args["testingSet"]:
     try:
         testing_names = os.listdir(test_path)
     except OSError:
-        print "No such directory {}\nCheck if the file exists".format(test_path)
+        # print ("No such directory {}\nCheck if the file exists".format(test_path))
         exit()
     for testing_name in testing_names:
         dir = os.path.join(test_path, testing_name)
@@ -37,19 +38,21 @@ else:
     image_paths = [args["image"]]
     
 # Create feature extraction and keypoint detector objects
-fea_det = cv2.FeatureDetector_create("SIFT")
-des_ext = cv2.DescriptorExtractor_create("SIFT")
+# fea_det = cv2.x.FeatureDetector_create("SIFT")
+# des_ext = cv2.DescriptorExtractor_create("SIFT")
+fea_det = cv2.xfeatures2d.SIFT_create()
 
 # List where all the descriptors are stored
 des_list = []
 
 for image_path in image_paths:
     im = cv2.imread(image_path)
-    if im == None:
-        print "No such file {}\nCheck if the file exists".format(image_path)
+    if im is None:
+        print("No such file {}\nCheck if the file exists".format(image_path))
         exit()
-    kpts = fea_det.detect(im)
-    kpts, des = des_ext.compute(im, kpts)
+    # kpts = fea_det.detect(im)
+    # kpts, des = des_ext.compute(im, kpts)
+    kpts, des = fea_det.detectAndCompute(im, None)
     des_list.append((image_path, des))   
     
 # Stack all the descriptors vertically in a numpy array

@@ -8,6 +8,7 @@ import os
 from sklearn.svm import LinearSVC
 from sklearn.externals import joblib
 from scipy.cluster.vq import *
+from scipy._lib.six import xrange
 from sklearn.preprocessing import StandardScaler
 
 # Get the path of the training set
@@ -32,16 +33,19 @@ for training_name in training_names:
     class_id+=1
 
 # Create feature extraction and keypoint detector objects
-fea_det = cv2.FeatureDetector_create("SIFT")
-des_ext = cv2.DescriptorExtractor_create("SIFT")
+# fea_det = cv2.FeatureDetector_create("SIFT")
+fea_det = cv2.xfeatures2d.SIFT_create()
+
+# des_ext = cv2.DescriptorExtractor_create("SIFT")
 
 # List where all the descriptors are stored
 des_list = []
 
 for image_path in image_paths:
     im = cv2.imread(image_path)
-    kpts = fea_det.detect(im)
-    kpts, des = des_ext.compute(im, kpts)
+    # kpts = fea_det.detect(im)
+    # kpts, des = des_ext.compute(im, kpts)
+    kpts, des = fea_det.detectAndCompute(im, None)
     des_list.append((image_path, des))   
     
 # Stack all the descriptors vertically in a numpy array
@@ -73,5 +77,4 @@ clf = LinearSVC()
 clf.fit(im_features, np.array(image_classes))
 
 # Save the SVM
-joblib.dump((clf, training_names, stdSlr, k, voc), "bof.pkl", compress=3)    
-    
+joblib.dump((clf, training_names, stdSlr, k, voc), "bof.pkl", compress=3)
