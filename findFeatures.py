@@ -1,14 +1,14 @@
 #!/usr/local/bin/python2.7
 
 import argparse as ap
+import os
 import cv2
 import imutils 
 import numpy as np
-import os
-from sklearn.svm import LinearSVC
-from sklearn.externals import joblib
 from scipy.cluster.vq import *
-from scipy._lib.six import xrange
+import joblib
+import six.moves as sm
+from sklearn.svm import LinearSVC
 from sklearn.preprocessing import StandardScaler
 
 # Get the path of the training set
@@ -34,7 +34,7 @@ for training_name in training_names:
 
 # Create feature extraction and keypoint detector objects
 # fea_det = cv2.FeatureDetector_create("SIFT")
-fea_det = cv2.xfeatures2d.SIFT_create()
+fea_det = cv2.SIFT_create()
 
 # des_ext = cv2.DescriptorExtractor_create("SIFT")
 
@@ -59,7 +59,7 @@ voc, variance = kmeans(descriptors, k, 1)
 
 # Calculate the histogram of features
 im_features = np.zeros((len(image_paths), k), "float32")
-for i in xrange(len(image_paths)):
+for i in sm.xrange(len(image_paths)):
     words, distance = vq(des_list[i][1],voc)
     for w in words:
         im_features[i][w] += 1

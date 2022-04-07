@@ -1,14 +1,13 @@
 #!/usr/local/bin/python2.7
 
 import argparse as ap
-import cv2
-import imutils 
-import numpy as np
 import os
-from sklearn.svm import LinearSVC
-from sklearn.externals import joblib
+import cv2
+import numpy as np
+import imutils
+import six.moves as sm
+import joblib
 from scipy.cluster.vq import *
-from scipy._lib.six import xrange
 
 # Load the classifier, class names, scaler, number of clusters and vocabulary 
 clf, classes_names, stdSlr, k, voc = joblib.load("bof.pkl")
@@ -40,7 +39,7 @@ else:
 # Create feature extraction and keypoint detector objects
 # fea_det = cv2.x.FeatureDetector_create("SIFT")
 # des_ext = cv2.DescriptorExtractor_create("SIFT")
-fea_det = cv2.xfeatures2d.SIFT_create()
+fea_det = cv2.SIFT_create()
 
 # List where all the descriptors are stored
 des_list = []
@@ -62,7 +61,7 @@ for image_path, descriptor in des_list[0:]:
 
 # 
 test_features = np.zeros((len(image_paths), k), "float32")
-for i in xrange(len(image_paths)):
+for i in sm.xrange(len(image_paths)):
     words, distance = vq(des_list[i][1],voc)
     for w in words:
         test_features[i][w] += 1

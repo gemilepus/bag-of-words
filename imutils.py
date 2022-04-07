@@ -1,7 +1,8 @@
 #!/usr/local/bin/python2.7
 
-import cv2, os
-import matplotlib.pyplot as plt 
+import cv2
+import matplotlib.pyplot as plt
+import os
 
 def imlist(path):
     """
